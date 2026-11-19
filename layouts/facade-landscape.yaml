@@ -1,0 +1,61 @@
+# Landscape facade for a TV screen or a 4K YouTube film (draft, 13 Nov 2026): the same 30 windows, re-ordered
+# from dusk to bedtime. Every page is one 16:9 screen (3840x2160): one large window and five smaller ones on a
+# 3x3 grid; pages stack down the building and the camera tours each page, then scrolls to the next, as in
+# facade-pages.yaml. Close-ups are wider than in the 9:16 film (focus width 0.85 of the window) because a 16:9
+# window nearly fills a 16:9 screen; that keeps the 1080p clips at about 2x enlargement in the 4K frame.
+canvas: {width: 3840, gap: 12, background: "#0b0e13"}
+output: {width: 3840, height: 2160}
+timing: {intro_hold: 10, zoom_in: 1.3, hold: 6, zoom_out: 1.3, gap: 0.8, page_hold: 2, end_hold: 3, scroll_seconds_per_screen: 3}
+
+slots:   # [x, y, width, height] within one 3840x2160 page: cells 1264x704 with 12 px gaps
+  large:  {rect: [12, 12, 2540, 1420]}
+  right1: {rect: [2564, 12, 1264, 704]}
+  right2: {rect: [2564, 728, 1264, 704]}
+  low1:   {rect: [12, 1444, 1264, 704]}
+  low2:   {rect: [1288, 1444, 1264, 704]}
+  low3:   {rect: [2564, 1444, 1264, 704]}
+slot_order: [large, right1, right2, low3, low2, low1]   # tour order: the large window, then clockwise
+
+windows:   # focus = [x fraction, y fraction, close-up width as a fraction of the window width]
+  - {id: cafe, file: media/loops/03-cafe.mp4, focus: [0.60, 0.52, 0.85]}
+  - {id: chip-shop, file: media/loops/36-chip-shop.mp4, focus: [0.45, 0.45, 0.85]}
+  - {id: cat, file: media/loops/02-cat-15th-floor.mp4, focus: [0.66, 0.62, 0.85]}
+  - {id: basement, file: media/loops/15-basement-kitchen.mp4, focus: [0.48, 0.50, 0.85]}
+  - {id: florist, file: media/loops/34-florist-closing.mp4, focus: [0.57, 0.50, 0.85]}
+  - {id: dog, file: media/loops/04-dog-fetch.mp4, focus: [0.50, 0.64, 0.85]}
+  - {id: dinner, file: media/loops/05-dinner-through-house.mp4, focus: [0.47, 0.42, 0.85]}
+  - {id: pizza, file: media/loops/13-pizza-night.mp4, focus: [0.53, 0.55, 0.85]}
+  - {id: corner-shop, file: media/loops/10-corner-shop.mp4, focus: [0.48, 0.48, 0.85]}
+  - {id: highrise, file: media/loops/06-highrise-dad-cooking.mp4, focus: [0.42, 0.60, 0.85]}
+  - {id: ironing, file: media/loops/22-man-ironing.mp4, focus: [0.55, 0.50, 0.85]}
+  - {id: tailor, file: media/loops/44-tailor-at-the-machine.mp4, focus: [0.66, 0.55, 0.85]}
+  - {id: village-pub, file: media/loops/45-village-pub-by-the-fire.mp4, focus: [0.38, 0.58, 0.85]}
+  - {id: launderette, file: media/loops/07-launderette.mp4, focus: [0.45, 0.52, 0.85]}
+  - {id: potter, file: media/loops/11-potter-at-the-wheel.mp4, focus: [0.58, 0.55, 0.85]}
+  - {id: knitting, file: media/loops/14-knitting-with-a-cat.mp4, focus: [0.60, 0.58, 0.85]}
+  - {id: stretch, file: media/loops/27-evening-stretch.mp4, focus: [0.38, 0.55, 0.85]}
+  - {id: barber, file: media/loops/12-barber-sweeping-up.mp4, focus: [0.46, 0.58, 0.85]}
+  - {id: board-game, file: media/loops/20-board-game-in-the-conservatory.mp4, focus: [0.40, 0.50, 0.85]}
+  - {id: service, file: media/loops/49-evening-service.mp4, focus: [0.50, 0.50, 0.85]}
+  - {id: gamer, file: media/loops/19-teenager-gaming.mp4, focus: [0.50, 0.50, 0.85]}
+  - {id: reader, file: media/loops/17-old-man-with-newspaper.mp4, focus: [0.40, 0.55, 0.85]}
+  - {id: boutique, file: media/loops/46-boutique-at-night.mp4, focus: [0.52, 0.58, 0.85]}
+  - {id: fish-tank, file: media/loops/09-fish-tank-in-the-dark.mp4, focus: [0.40, 0.52, 0.85]}
+  - {id: pool, file: media/loops/16-pool-after-hours.mp4, focus: [0.50, 0.50, 0.85]}
+  - {id: terrace, file: media/loops/01-terrace-couple.mp4, focus: [0.62, 0.55, 0.85], gain: 0.35}
+  - {id: xmas-tree, file: media/loops/08-christmas-tree-empty-room.mp4, focus: [0.52, 0.45, 0.85]}
+  - {id: dinner-party, file: media/loops/23-after-the-dinner-party.mp4, focus: [0.68, 0.62, 0.85]}
+  - {id: bedtime, file: media/loops/32-bedtime-story.mp4, focus: [0.58, 0.58, 0.85]}
+  - {id: nursery, file: media/loops/28-nursery-night-light.mp4, focus: [0.55, 0.55, 0.85]}
+
+pages:
+  # Dusk: shops closing, people coming home: chip-shop, cafe, cat, basement, florist, dog
+  - {large: chip-shop, right1: cafe, right2: cat, low3: basement, low2: florist, low1: dog}
+  # Supper: dinner, pizza, corner-shop, highrise, ironing, tailor
+  - {large: dinner, right1: pizza, right2: corner-shop, low3: highrise, low2: ironing, low1: tailor}
+  # The evening: village-pub, launderette, potter, knitting, stretch, barber
+  - {large: village-pub, right1: launderette, right2: potter, low3: knitting, low2: stretch, low1: barber}
+  # Later: board-game, service, gamer, reader, boutique, fish-tank
+  - {large: board-game, right1: service, right2: gamer, low3: reader, low2: boutique, low1: fish-tank}
+  # Night: pool, terrace, xmas-tree, dinner-party, bedtime, nursery
+  - {large: pool, right1: terrace, right2: xmas-tree, low3: dinner-party, low2: bedtime, low1: nursery}

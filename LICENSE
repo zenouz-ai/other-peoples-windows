@@ -1,0 +1,34 @@
+Other People's Windows
+
+Two parts of this repository are licensed differently.
+
+1. The code (everything under pipeline/ and scripts/, the layouts/ files and the
+   public-export/ configuration) is released under the MIT License below.
+
+2. The artwork is not licensed for reuse: the films, the stills and frames under
+   docs/assets/, and the window texts (scene, motion and ambience descriptions)
+   in scenes/scenes.yaml and the batch briefs. © 2026 Kayvan Zenouz. All rights
+   reserved. You may read them and quote short passages for commentary or
+   research with attribution.
+
+MIT License
+
+Copyright (c) 2026 Zenouz AI
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

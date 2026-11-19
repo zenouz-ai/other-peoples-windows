@@ -1,0 +1,1061 @@
+# Single source of truth for every window: what exists, how it was made, and what is planned.
+# Status: done | batch-05 (the final six, docs/batch-05.md) | cut (not in the film: the project finishes at 30
+# windows, decided 13 Nov 2026; their prompts are kept for reference).
+# loop_settings are the exact make_loop.py arguments used, so any loop can be rebuilt from media/raw.
+# Planned windows store prompt parts only (scene, motion, ambience, empty); pipeline/prompts.py joins them
+# with prompt_style into the full prompts, checks them (`lint`) and writes the batch briefs (`brief`).
+project: Other People's Windows
+target_windows: 30   # windows in the film (status not `cut`); the scene IDs run to 50 and stay fixed
+
+# Every clip is generated long enough to give a 6 to 10 second continuous loop after make_loop.py trims
+# about half a second from the start: Veo 8 s (its maximum), Kling 8 to 10 s.
+clip_seconds: {veo: 8, kling: [8, 10]}
+loop_seconds: [6, 10]
+
+# Shared wording, after Google's Veo 3.1 and Gemini image guidance (Nov 2026): shot and subject first, then
+# light and style; describe what should be there rather than what should not; label the sound
+# ("Ambient noise:"). Rules from docs/log.md: one slow continuous motion, nobody enters, leaves or looks at
+# the camera, no readable text or logos, sound faint and never music.
+prompt_style:
+  image: >-
+    Generate a 16:9 image. {scene} Photorealistic, shot on 35mm film with a 35mm lens, deep focus and fine
+    grain. London at dusk in late autumn: cool blue light outside, warm light inside, faint reflections of
+    the street on the glass. Candid and quiet. {people} Every sign, screen, label and book spine is blank or
+    too small to read, and nothing carries a brand logo.
+  people: >-
+    Any people are small in the frame, absorbed in what they are doing, seen side-on or from behind with
+    their faces turned away from the camera. Keep the people exactly as described.
+  empty_room: Nobody is in the room.
+  video: >-
+    Static locked-off shot from a tripod, one continuous take: the framing stays exactly as in the image,
+    with no zoom, push-in, pan or camera drift. Animate this exact image, keeping the same place, people and
+    lighting. {motion} All motion is slow, subtle and continuous for the whole clip, {stay}. Ambient noise:
+    {ambience}, very faint and muffled, as if heard from outside through closed glass. No music, no singing,
+    no dialogue.
+  stay_people: and everyone stays in place with their faces turned away from the camera
+  stay_empty: and the room stays empty
+
+batches:
+  batch-02:
+    title: "Batch 2: eight new windows on app credits"
+    summary: Eight window types the facade does not have yet, made by hand with the credits already paid for. Then the API pipeline takes over.
+    purpose: >-
+      Use the Google Flow and Kling app credits on scenes that add variety: a shop at work, an empty seasonal
+      room, a dark high-rise, rain, a craft at work, a group of friends and an older neighbour with a pet.
+      Each model gets the scenes it handles best.
+    key_points:
+      - "**Deadline:** Google says Veo 3.1 Fast and Quality retire on 5 December 2026. Make windows 07 to 10 first."
+      - "**Veo 3.1 Quality in Flow (07 to 10, 100 credits each, 8 seconds):** atmosphere-led scenes where light, water or fire carry the motion."
+      - "**Kling 4.0 (11 to 14, 8 to 10 seconds):** scenes with hands and people, where Kling beat Veo in the café and dog tests. Check the credit cost shown before generating; use 1080p."
+      - "**Both:** 16:9, the still as the start frame only, one take each. Every clip must give a 6 to 10 second loop."
+      - "**Sound:** faint ambience only. Kling''s sound has added music, speech and farmyard noises in tests, so every clip goes through `pipeline/sound_check.py`; a flagged clip keeps its picture and is muted or regenerated."
+      - "**Still images:** Gemini 3.1 Pro with the image prompts below. Check that the people match the casting before animating."
+      - "**Name the files** with the window ID (for example `07-launderette.mp4`) and save them into `media/inbox/`."
+    next_actions:
+      - Make the 8 stills in Gemini and save them to `media/stills/`
+      - Generate the 4 Veo clips in Flow (Quality, 8 s) before 5 December 2026
+      - Generate the 4 Kling clips (8 to 10 s)
+      - Save the clips to `media/inbox/` and ask Claude Code to check, loop and add them to page 2
+    models:
+      Veo: Veo 3.1 Quality, 8 s (Flow)
+      Kling: Kling 4.0, 8 to 10 s
+  batch-04:
+    title: "Batch 4: the model shoot-out (page 4)"
+    summary: Six windows for page 4, each still made by Gemini, GPT Image and Midjourney and each picked still animated twice, by Wan 3.0 and by the current model, so the tools for the last 26 windows are chosen on a written scorecard.
+    midjourney: true
+    purpose: >-
+      Two empty, atmosphere-led rooms (28, 46: today Omni's ground) and four people scenes with hands and
+      bodies (22, 27, 34, 49: today Kling's ground; 49, an evening church service, came in on 11 Nov), mixing street level and high-rise. Same prompts for every model,
+      same checks, results in docs/batch-04-scorecard.md (written by `generate.py review`). Plan and costs:
+      docs/archive/plan-batches-04-05.md.
+    key_points:
+      - "**Stills:** four candidates per window from each of Gemini (`generate.py still NN`), GPT Image (`--engine openai`) and Midjourney (by hand, prompt below; two grids per window)."
+      - "**Midjourney:** paste the Midjourney prompt into midjourney.com, download the best four images of two grids into `media/inbox/`, then `generate.py import NN FILES` copies them to `media/stills/NN/m1.jpg` onwards."
+      - "**Score before picking:** casting as described, faces away, no extra people or pedestrians, no readable text or logos, London at dusk and the 35 mm look, edits needed."
+      - "**Video:** each picked still gets a Wan 3.0 take and a take on the current model (Kling 4.0 for 22, 27, 34, 49; Gemini Omni for 28, 46): `generate.py video NN --engine wan,kling` or `wan,omni`."
+      - "**Midjourney video (by hand, third contender):** in midjourney.com, upload the picked still as the starting frame, paste the Midjourney video prompt, HD, low motion, then extend once to 9 s (clips start at 5 s and extend in 4 s steps). It has no sound, so the window gets a sound bed. `generate.py import NN FILE.mp4` copies the download to `media/inbox/` as an `_mj` take and checks it."
+      - "**Checks:** `generate.py check` and `review`: first frame against the still, wobble, drift, sound flags; casting held and hands by eye."
+      - "**Budget:** $40 for the batch on the APIs (`generate.yaml`), plus one month of Midjourney."
+    next_actions:
+      - Make the Gemini and GPT Image stills (dry run first, then with Kayvan's go-ahead)
+      - Make two Midjourney grids per window and import the picks
+      - Score the stills in the scorecard and pick one per window
+      - Make the Wan 3.0 and current-model takes, score them, loop the better one and place it on page 4
+    models:
+      Veo: "Gemini Omni 1.2 Flash, 10 s, against Wan 3.0 (empty rooms)"
+      Kling: "Kling 4.0, 10 s, against Wan 3.0 (people)"
+  batch-05:
+    title: "Batch 5: the final six (page 5)"
+    summary: The last six windows, made with the tools that won batch 4, to finish the facade at 30 windows on five pages.
+    midjourney: true
+    purpose: >-
+      Fill the gaps in the facade: a teenager (19), a whole family round a board game (20), a father and small child
+      (32), the most London of shopfronts (36), a view down into a basement (15) and one empty, aqua room (16). Mostly street
+      level and upstairs terraces, since page 4 already has two high-rise windows. Plan and costs:
+      docs/archive/plan-batches-04-05.md.
+    key_points:
+      - "**Stills:** four GPT Image 2.5-flare candidates at 2560x1440 (`generate.py still NN --engine openai`) and two Midjourney grids per window (`prompts.py show NN --midjourney`, then `generate.py import`). Upscale a Midjourney pick (Subtle) before using it. Gemini only for edits or a hard window."
+      - "**Score before picking:** casting as described, faces away, no extra people or pedestrians, no readable text or logos, London at dusk and the 35 mm look, sharp at full size."
+      - "**Video:** Kling 4.0, 10 s at 1080p, for the five people scenes (15, 19, 20, 32, 36); Wan 3.0 for the pool (16), with Gemini Omni as the fallback. Check every Wan take frame by frame."
+      - "**Sound:** expect to replace Kling's sound with a bed from a rejected take or another raw clip; nothing with music or words."
+      - "**Budget:** $25 on the APIs (`generate.yaml`). Kling has 151 units (10 takes of 10 s), enough for batch 5 and the page 1 retakes."
+    next_actions:
+      - Check the OpenAI and Alibaba Cloud balances (Kling topped up 13 Nov)
+      - Make the GPT Image stills and the Midjourney grids; score and pick
+      - Make the six takes; loop the keepers with sound beds; place them on page 5
+      - Render the five-page film in 4K and update YouTube and zenouz.ai
+    models:
+      Kling: Kling 4.0, 10 s at 1080p (Kling API)
+      Wan: Wan 3.0, 10 s at 1080p (Alibaba Cloud Model Studio), Gemini Omni as the fallback
+  backlog:
+    title: "Backlog: windows 15 to 50"
+    summary: The remaining 36 windows, for the API pipeline (roadmap, Phase 4). Replaces the production pack PDF, whose numbering and prompts are out of date.
+    purpose: >-
+      Every scene adds something the facade does not yet have. The model column follows the 8 November test:
+      Kling for people and hands, Veo (or Google's successor model) for atmosphere-led scenes.
+    key_points:
+      - "**Clip length:** Veo 8 s; Kling 8 to 10 s, so each loop is 6 to 10 seconds."
+      - "**Veo after 5 December 2026:** Google says Veo 3.1 retires then; use the newest Google model that takes a start image. The prompts still apply."
+      - "**Sound:** faint ambience only; every clip goes through `pipeline/sound_check.py` before it is looped."
+      - "**Window 45** is the countryside pub, set in a village on London's rural edge so the facade stays London."
+    next_actions:
+      - Create a Gemini API key with billing and a budget alert; optionally a Kling API trial
+      - Ask Claude Code to build `pipeline/generate.py` (roadmap, Phase 4) and pilot five scenes
+    models:
+      Veo: "Gemini Omni 1.2 Flash, 10 s (Gemini API; Veo 3.1 left the API on 22 Oct 2026); empty, atmosphere-led rooms only, since it recast a person on 45"
+      Kling: Kling 4.0, 8 to 10 s (Kling API)
+
+windows:
+- id: 01-terrace-couple
+  title: Terrace couple watching TV
+  kind: Home
+  model: Veo 3.1 (Flow)
+  status: done
+  raw: media/raw/01-terrace-couple_veo.mp4
+  loop: media/loops/01-terrace-couple.mp4
+  loop_settings:
+    start: 20
+    end: 188
+    blend: 12
+    volume: 1.0
+    stabilize: false
+    lock: true
+  notes: 'Forward loop cut between two matching moments; mosaic gain 0.35. Ping-pong rejected (car reflection ran
+    backwards). At 5.0 s it is shorter than the 6 to 10 s rule for new windows; a re-cut (start 12, end 188, blend
+    12) would give 7.3 s. Rejected take: media/raw/01-terrace-couple_veo-fast-draft_rejected.mp4 (720p Veo Fast;
+    the man looks straight at the camera). Rebuilt 9 Nov with make_loop --lock to remove frame-to-frame shake the smooth stabiliser left in (wobble 0.17 to 0.03 px rms at 1080p). Re-cut 13 Nov to 7.0 s (start 20, end 188, blend 12, --lock): the closest match of 7 s or more (start 12 matched less well); the 5 s loop is kept as media/loops/01-terrace-couple_5s.mp4.'
+- id: 02-cat-15th-floor
+  title: Cat on the 15th floor
+  kind: Quiet
+  model: Veo 3.1 (Flow)
+  status: done
+  raw: media/raw/02-cat-15th-floor_veo.mp4
+  loop: media/loops/02-cat-15th-floor.mp4
+  loop_settings:
+    start: 24
+    end: 190
+    blend: 24
+    volume: 0.5
+    stabilize: false
+    lock: true
+  notes: Barely moves, so a one-second blend hides the join. Rebuilt 9 Nov with make_loop --lock to remove
+    frame-to-frame shake (wobble 0.04 to 0.03 px rms at 1080p).
+- id: 03-cafe
+  title: Café at dusk
+  kind: Shop
+  model: Veo 3.1 Quality (Flow)
+  status: done
+  scene: 'Seen from a wet pavement at dusk, a small corner café: a barista in a black apron working the espresso
+    machine with steam rising, a woman reading a book and a man at a laptop at a table in the window, a woman in a
+    cream jumper holding a mug at a side table.'
+  motion: Steam rises from the espresso machine as the barista works; the customers read, type and sip slowly.
+  ambience: an espresso machine hissing and cups set down softly
+  empty: false
+  still: media/stills/03-cafe.jpg
+  raw: media/raw/03-cafe_veo-quality.mp4
+  loop: media/loops/03-cafe.mp4
+  loop_settings:
+    start: 12
+    end: 188
+    blend: 12
+    volume: 0.25
+    stabilize: true
+  notes: 'Camera crept in ~4%, removed. Made from the earlier still (Apple logo and two background men still visible);
+    media/stills/03-cafe_clean.jpg is the cleaned still for a remake. Sound check (9 Nov): borderline music tag
+    (0.22 raw, 0.10 in the loop), worth a listen. Rejected take: media/raw/03-cafe_veo-first-take_rejected.mp4 (generated
+    piano music, tagged 0.74). The Kling test in media/raw beat Veo on steadiness and hands, but its sound has clear
+    speech and music, so a Kling remake must be muted or re-sounded. Prompt parts added 13 Nov for the Kling remake (the Kling test is
+    720p and 5 s, too short): `generate.py video 03 --engine kling` from media/stills/03-cafe.jpg (a copy of the clean
+    still). Remade 13 Nov on Kling 4.0 from the clean still (10 s 1080p, $2.12): steam from the machine, the barista works, the customers read and sip; wobble 0.02 px, no logo. Its own sound had music and speech, so the bed is the Veo take''s café hiss (2 to 7 s), kept at -43.5 LUFS (music 0.14; 0.16 when louder). Loop 8.38 s. Previous loop: the Veo take, start 12, end 188, blend 12, volume 0.25, --stabilize. Kayvan kept the original Veo loop (13 Nov): rebuilt from the Veo take with its original settings; the Kling remake stays as an alternative, raw media/raw/03-cafe_kling.mp4, loop media/loops/03-cafe_kling.mp4 (start 12, end 213, blend 12, volume 0.5, bed media/raw/03-cafe_veo-quality.mp4:2-7).'
+- id: 04-dog-fetch
+  title: Golden retriever fetches a ball
+  kind: Home
+  model: Veo 3.1 Quality (Flow)
+  status: done
+  raw: media/raw/04-dog-fetch_veo-quality.mp4
+  loop: media/loops/04-dog-fetch.mp4
+  loop_settings:
+    start: 12
+    end: 172
+    blend: 12
+    volume: 0.3
+    stabilize: true
+  notes: 'Trimmed before the dog swallows the ball. The Kling test (media/raw) fetched cleanly first time, but its
+    sound has music (0.61), chickens and a rooster at -24 LUFS, so a Kling replacement must be muted or re-sounded. Kling take compared 13 Nov and not used: it moves the dog across the room, so its 5.5 s loop (the clip is 6 s) would dissolve the dog from one place to another at the restart, and it is softer; the Veo loop stays.'
+- id: 05-dinner-through-house
+  title: Couple at dinner, seen through the house
+  kind: Home
+  model: Veo 3.1 Quality (Flow)
+  status: done
+  raw: media/raw/05-dinner-through-house_veo-quality.mp4
+  loop: media/loops/05-dinner-through-house.mp4
+  loop_settings:
+    start: 12
+    end: 190
+    blend: 12
+    volume: 1.0
+    bed: 'media/raw/49-evening-service_wan_rejected.mp4:2-5'
+    stabilize: false
+    lock: true
+  notes: 'No drift. One of the strongest windows. Its sound is crickets and an owl (sound check, 9 Nov); crickets
+    are unlikely in a London garden in late autumn, so consider a quieter bed if it is ever re-cut. Rebuilt 9 Nov
+    with make_loop --lock to remove frame-to-frame shake (wobble 0.06 to 0.02 px rms at 1080p). New bed 13 Nov: the quiet room hush of the rejected 49 Wan take (2 to 5 s) in place of the crickets and owl, at about the same level (-47.2 LUFS, no flags); the cricket loop is kept as media/loops/05-dinner-through-house_crickets.mp4.'
+- id: 06-highrise-dad-cooking
+  title: High-rise flat, dad cooking, child on the sofa
+  kind: Home
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from outside a high-rise flat at dusk, through a floor-to-ceiling glass wall: a dad in a grey T-shirt
+    cooking at a kitchen island under a pendant lamp, steam rising from the pan, a child curled up on the sofa reading,
+    toys on the rug, the city lights beyond.'
+  motion: The dad slowly stirs the pan and steam rises steadily; the child turns a page now and then.
+  ambience: a pan sizzling softly and the distant hum of the city
+  empty: false
+  still: media/stills/06-highrise-dad-cooking.jpg
+  raw: media/raw/06-highrise-dad-cooking_kling.mp4
+  loop: media/loops/06-highrise-dad-cooking.mp4
+  loop_settings:
+    start: 12
+    end: 230
+    blend: 12
+    volume: 0.65
+    bed: 'media/raw/06-highrise-dad-cooking_veo-quality.mp4:3.5-7.8'
+    stabilize: false
+  notes: 'Camera crept in ~9%, removed. Prompt parts added 13 Nov for a Kling remake (`generate.py video 06 --engine
+    kling`); no still was kept, so media/stills/06-highrise-dad-cooking.jpg is the first frame of the Veo take. Remade 13 Nov on Kling 4.0 from the first frame of the Veo take (10 s 1080p, $2.12): the dad cooks, the child on the sofa; wobble 0.01 px, no creep. Its own sound had loud speech, so the bed is the Veo take''s stirring and sizzling (3.5 to 7.8 s). Loop 9.08 s, -40.1 LUFS, no flags. Previous loop: the Veo take, start 12, end 188, blend 12, volume 0.3, --stabilize. Kayvan kept the original Veo loop (13 Nov): rebuilt from the Veo take with its original settings; the Kling remake stays as an alternative, raw media/raw/06-highrise-dad-cooking_kling.mp4, loop media/loops/06-highrise-dad-cooking_kling.mp4 (start 12, end 230, blend 12, volume 0.65, bed media/raw/06-highrise-dad-cooking_veo-quality.mp4:3.5-7.8). Back to the Kling remake the same day (Kayvan: if genuinely better): wobble 0.01 px against 0.71 px for the Veo loop, a third sharper (Laplacian variance 469 against 349, since the Veo loop is cropped and enlarged to remove its creep) and 9.1 s against 7.3 s. The Veo loop is kept as media/loops/06-highrise-dad-cooking_veo.mp4.'
+- id: 07-launderette
+  title: Launderette
+  kind: Shop
+  model: Veo 3.1 Quality (Flow)
+  status: done
+  scene: 'Seen from the pavement, a launderette after the evening rush: rows of washing machines with drums spinning, a young
+    man in a wheelchair reading a book while he waits, bright strip lights.'
+  motion: The drums of the washing machines turn steadily. The young man sits still and reads; only his breathing
+    moves.
+  ambience: the low rumble of washing machines
+  empty: false
+  still: media/stills/07-launderette.jpg
+  raw: media/raw/07-launderette_veo-quality.mp4
+  loop: media/loops/07-launderette.mp4
+  loop_settings:
+    start: 12
+    end: 188
+    blend: 12
+    volume: 0.3
+    stabilize: false
+    lock: true
+  notes: 'Batch 2, 9 Nov. Gemini first added a second person at the back; edited out. Drift under 0.03%, so not
+    stabilised. Sound: -28.4 LUFS raw (sliding door, door, vehicle tags; no music or speech), -39.7 LUFS in the loop.
+    He raises a hand to his face around 4 s. Rebuilt 9 Nov with make_loop --lock to remove frame-to-frame shake the smooth stabiliser left in (wobble 0.32 to 0.03 px rms at 1080p).'
+- id: 08-christmas-tree-empty-room
+  title: Christmas tree, empty room
+  kind: Quiet
+  model: Veo 3.1 Quality (Flow)
+  status: done
+  scene: 'Seen from the pavement, a terraced front room window: an empty sitting room with a decorated Christmas
+    tree by the window, warm fairy lights, a fire glowing in the grate.'
+  motion: The fairy lights twinkle softly and firelight flickers across the walls.
+  ambience: a crackling fire
+  empty: true
+  still: media/stills/08-christmas-tree-empty-room.jpg
+  raw: media/raw/08-christmas-tree-empty-room_veo-quality.mp4
+  loop: media/loops/08-christmas-tree-empty-room.mp4
+  loop_settings:
+    pre_trim_end: 137
+    start: 12
+    end: 137
+    blend: 12
+    volume: 0.285
+    bed: 'media/raw/08-christmas-tree-empty-room_veo-quality.mp4:0-3'
+    stabilize: true
+    lock: true
+  notes: 'Batch 2, 9 Nov. Still reworked with Kayvan in Gemini: first version looked like a shopfront, so remade as a
+    Victorian terraced bay window, gate moved onto the tiled path to the front door, gap in the front wall closed,
+    then cropped in 15% (anchored left so the door and gate stay in frame). Veo ignored the locked-off prompt: steady
+    push-in to about 25% by 5.7 s, then erratic camera jumps. To rebuild, first cut the raw clip to its first 137
+    frames (ffmpeg trim=end_frame=137 with -r 24, or the encoder writes 25 fps) so the stabiliser fits only the steady part, then run make_loop with these
+    settings; crop zoom 1.24x. Loop 5.2 s, under the 6 s rule. Muted: sound check tagged music 0.72 (peak +0.3 dBFS). Rebuilt 9 Nov with make_loop --lock after --stabilize to remove frame-to-frame shake the smooth stabiliser left in (wobble 1.13 to 0.55 px rms at 1080p). Sound bed added 10 Nov (make_loop --bed): its own fire crackle and distant cars from the first 3 s, before Veo''s music starts; Kayvan listened and kept it; -40.0 LUFS in the loop, no music or speech flags.'
+- id: 09-fish-tank-in-the-dark
+  title: Fish tank in the dark
+  kind: Dark
+  model: Veo 3.1 Quality (Flow)
+  status: done
+  scene: 'From a tower opposite, at the same height, a 20th-floor flat with floor-to-ceiling glass: a dark empty
+    living room lit only by a large glowing fish tank, city reflections on the glass.'
+  motion: Fish glide slowly through the tank and bubbles rise; the city lights reflected in the glass shimmer slightly.
+  ambience: aquarium bubbles and a distant city hum
+  empty: true
+  still: media/stills/09-fish-tank-in-the-dark.jpg
+  raw: media/raw/09-fish-tank-in-the-dark_veo-quality.mp4
+  loop: media/loops/09-fish-tank-in-the-dark.mp4
+  loop_settings:
+    start: 12
+    end: 188
+    blend: 12
+    volume: 0.3
+    stabilize: true
+    lock: true
+  notes: 'Batch 2, 9 Nov. Gemini first put two shadowy figures behind the sofa; edited out. Camera pushed in about
+    13% despite the prompt; stabilised (crop zoom 1.15x), residual drift under 1%. Sound: bubbling and liquid tags,
+    no flags; -37.5 LUFS in the loop. Rebuilt 9 Nov with make_loop --lock after --stabilize to remove frame-to-frame shake the smooth stabiliser left in (wobble 1.42 to 1.10 px rms at 1080p).'
+- id: 10-corner-shop
+  title: Corner shop
+  kind: Shop
+  model: Veo 3.1 Quality (Flow)
+  status: done
+  scene: 'Seen from the pavement, a corner shop window: an older white woman with reading glasses on a chain behind
+    the counter watching a small television, shelves of unbranded goods, a glowing open sign with no readable text,
+    rain streaming down the shop window.'
+  motion: Rain streams down the shop window, the small television flickers, and the shopkeeper sits still behind
+    the counter.
+  ambience: rain on the glass and a fridge humming
+  empty: false
+  still: media/stills/10-corner-shop.jpg
+  raw: media/raw/10-corner-shop_veo-quality.mp4
+  loop: media/loops/10-corner-shop.mp4
+  loop_settings:
+    start: 68
+    end: 188
+    blend: 12
+    volume: 0.3
+    stabilize: false
+    lock: true
+  notes: 'Batch 2, 9 Nov. Still took three Gemini edits: a readable OPEN sign made blank, then the shopkeeper turned
+    from facing the camera to seen from behind. Veo added a cyclist passing the window (frames 12 to 55), so the loop
+    starts at frame 68 and is 5.0 s, under the 6 s rule. Drift 4.7%, stabilised (crop 1.05x). Sound: rain tags (thunder
+    0.13 in the loop, worth a listen); -39.7 LUFS in the loop. Rebuilt 9 Nov with make_loop --lock to remove frame-to-frame shake the smooth stabiliser left in (wobble 0.05 to 0.03 px rms at 1080p).'
+- id: 11-potter-at-the-wheel
+  title: Potter at the wheel
+  kind: Home
+  model: Kling 4.0 (KlingAI app)
+  status: done
+  scene: 'Seen from the pavement, the ground-floor front room of a terraced house turned into a small pottery studio:
+    a Black man in his forties in a clay-spattered apron, seen side-on at a potter''s wheel, shaping a tall clay
+    pot with both hands, shelves of unglazed pots behind him, a single work lamp.'
+  motion: The wheel turns steadily and his hands rise slowly up the spinning clay in one smooth, continuous movement.
+  ambience: the soft whirr of the wheel
+  empty: false
+  still: media/stills/11-potter-at-the-wheel.jpg
+  raw: media/raw/11-potter-at-the-wheel_kling.mp4
+  loop: media/loops/11-potter-at-the-wheel.mp4
+  loop_settings:
+    pre_crop: 1771:996:76:0
+    start: 12
+    end: 241
+    blend: 12
+    volume: 0.3
+    stabilize: false
+  notes: 'Replaces Piano by the window (9 Nov review): a piano scene always produces music. Batch 2, 9 Nov: Kling 4.0
+    Keyframes mode (still as first frame), 1080p, 10 s; cost 120 credits although the button showed 150. Raw is
+    1924x1076 and carries a burned-in "KlingAI 4.0" watermark bottom right (Standard plan). To rebuild, first crop
+    the raw with ffmpeg "crop=1771:996:76:0,scale=1920:1080:flags=lanczos" (top-anchored, removes the watermark,
+    about 8.6% zoom), then run make_loop with these settings. No drift. Sound: -33.6 LUFS raw, speech tagged 0.22
+    (0.14 in the loop) below the flag threshold, worth a listen; -45.6 LUFS in the loop.'
+- id: 12-barber-sweeping-up
+  title: Barber sweeping up
+  kind: Shop
+  model: Kling 4.0 (KlingAI app)
+  status: done
+  scene: 'Seen from the pavement, a barber shop after closing: a Black British barber in his twenties sweeping hair
+    from the floor between empty chairs, mirrors and warm lights, a striped pole outside.'
+  motion: He sweeps slowly and steadily between the empty chairs; the striped pole outside turns.
+  ambience: a broom on the floor and the quiet street
+  empty: false
+  still: media/stills/12-barber-sweeping-up.jpg
+  raw: media/raw/12-barber-sweeping-up_kling.mp4
+  loop: media/loops/12-barber-sweeping-up.mp4
+  loop_settings:
+    pre_crop: 1771:996:76:0
+    start: 24
+    end: 198
+    blend: 12
+    volume: 0.299
+    bed: 'media/raw/23-after-the-dinner-party_omni.mp4:0-10'
+    stabilize: false
+  notes: 'Batch 2, 9 Nov: Kling 4.0 Keyframes mode (still as first frame), 1080p, 10 s; cost 150 credits. Gemini
+    still edited to remove two distant pedestrians. Watermark crop as for 11: crop the raw with ffmpeg
+    "crop=1771:996:76:0,scale=1920:1080:flags=lanczos", then run make_loop with these settings. No drift (under
+    0.02%). Sound muted: Kling added music (tagged 0.78) and speech (0.48). Start 24 and end 198 chosen as the closest
+    match of the barber''s position at the restart (7.25 s loop); he still shows faintly twice during the half-second
+    blend because he moves around the floor. Sound bed added 10 Nov (make_loop --bed): street at pavement level (traffic, light rain, leaves) from the 23 raw clip; Kayvan listened and kept it; -40.1 LUFS in the loop, no music or speech flags.'
+- id: 13-pizza-night
+  title: Pizza night
+  kind: Home
+  model: Kling 4.0 (KlingAI app)
+  status: done
+  scene: 'Looking up at a first-floor flat above a shop: four friends in their twenties from different backgrounds
+    (a Black woman with an afro, an East Asian man, a white woman with red hair and a South Asian man) around a
+    coffee table sharing pizza, laughing, a string of fairy lights.'
+  motion: They laugh and lean towards each other with small, natural movements, everyone staying seated; the fairy
+    lights glow.
+  ambience: an indistinct murmur of conversation and soft laughter
+  empty: false
+  still: media/stills/13-pizza-night.jpg
+  raw: media/raw/13-pizza-night_kling.mp4
+  loop: media/loops/13-pizza-night.mp4
+  loop_settings:
+    pre_crop: 1771:996:76:0
+    start: 12
+    end: 213
+    blend: 12
+    volume: 0.25
+    stabilize: false
+  notes: 'Batch 2, 9 Nov: Kling 4.0 Keyframes mode (still as first frame), 1080p, 10 s; the credit counter did not
+    move (316 before and after). Gemini still edited so the East Asian man and the red-haired woman face their
+    neighbours rather than the window. Watermark crop as for 11: crop the raw with ffmpeg
+    "crop=1771:996:76:0,scale=1920:1080:flags=lanczos", then run make_loop with these settings. No drift. Sound:
+    -21.7 LUFS raw, speech tagged 0.80 with laughter; Kayvan listened and kept it as an indistinct murmur at volume
+    0.25 (-33.1 LUFS in the loop). End 213 is the closest
+    match of the four at the restart (8.38 s loop); heads still show double during the half-second blend.'
+- id: 14-knitting-with-a-cat
+  title: Knitting with a cat
+  kind: Home
+  model: Kling 4.0 (KlingAI app)
+  status: done
+  scene: 'Looking up at a first-floor flat above a shop: an elderly Chinese grandmother knitting in an armchair
+    by the window, a cat asleep on her lap, a lamp beside her.'
+  motion: Her knitting needles move slowly and rhythmically, and the cat sleeps on her lap, breathing slowly.
+  ambience: the soft click of knitting needles in a quiet room
+  empty: false
+  still: media/stills/14-knitting-with-a-cat.jpg
+  raw: media/raw/14-knitting-with-a-cat_kling.mp4
+  loop: media/loops/14-knitting-with-a-cat.mp4
+  loop_settings:
+    pre_crop: 1771:996:76:0
+    start: 24
+    end: 202
+    blend: 12
+    volume: 0.288
+    bed: 'media/raw/02-cat-15th-floor_veo.mp4:0-8'
+    stabilize: false
+  notes: 'Batch 2, 9 Nov: Kling 4.0 Keyframes mode (still as first frame), 1080p, 10 s; cost 150 credits. Gemini
+    still edited to remove four pedestrians on the street. Watermark crop as for 11: crop the raw with ffmpeg
+    "crop=1771:996:76:0,scale=1920:1080:flags=lanczos", then run make_loop with these settings. No drift. Sound
+    muted: -37.1 LUFS raw but tagged music 0.26 and speech 0.39. Start 24 and end 202 chosen as the closest match at
+    the restart (7.42 s loop); she stays in place, so the blend is clean. Sound bed added 10 Nov (make_loop --bed): a steady, distant city hum from the 02 raw clip, as room tone; Kayvan listened and kept it; -44.0 LUFS in the loop, no music or speech flags.'
+- id: 15-basement-kitchen
+  title: Basement kitchen
+  kind: Home
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from the pavement, looking down through black iron railings into a basement flat window: a small
+    warm kitchen where a Black British woman in her fifties with grey locs, wearing a cardigan, stands at the sink
+    under the window rinsing a mug, a kettle steaming on the side.'
+  motion: The woman slowly rinses the mug under running water. Steam drifts from the kettle.
+  ambience: a running tap and a kettle coming to the boil
+  empty: false
+  still: media/stills/15-basement-kitchen.jpg
+  raw: media/raw/15-basement-kitchen_kling.mp4
+  loop: media/loops/15-basement-kitchen.mp4
+  loop_settings:
+    start: 12
+    end: 227
+    blend: 12
+    volume: 0.6
+    bed: 'media/raw/15-basement-kitchen_kling.mp4:2-9'
+    stabilize: false
+  notes: 'Chosen 13 Nov for batch 5, the final six. Batch 5 still (13 Nov): Midjourney m1, upscaled (Subtle) to 2912x1632 as m5, Kayvan''s choice (he liked m1 or m4; m1 matches the casting, a woman in her fifties with grey locs, and has the mug and kettle steam). Video (13 Nov): Kling 4.0, 10 s 1080p, $2.12; she rinses the mug, the kettle steam billows, wobble 0.02 px. Its first 2 s carried music (0.78), so the bed is its own tap and drip sound from 2 to 9 s. Loop 8.96 s, -38.6 LUFS, no flags.'
+- id: 16-pool-after-hours
+  title: Pool after hours
+  kind: Quiet
+  model: Wan 3.0 (Alibaba Cloud Model Studio)
+  status: done
+  scene: 'Seen from the pavement through the tall glass wall of a London leisure centre after closing: an empty
+    indoor swimming pool, still turquoise water under dimmed lights, lane ropes floating on the surface, a
+    lifeguard chair at the side, rippling light from the water playing across the ceiling and the tiled walls.'
+  motion: Soft ripples move across the water and their reflected light drifts slowly over the ceiling and walls.
+  ambience: gently lapping water and the low hum of the ventilation
+  empty: true
+  still: media/stills/16-pool-after-hours.jpg
+  raw: media/raw/16-pool-after-hours_wan.mp4
+  loop: media/loops/16-pool-after-hours.mp4
+  loop_settings:
+    start: 12
+    blend: 12
+    volume: 1.3
+    stabilize: false
+    lock: true
+  notes: 'New 13 Nov in place of TV glow, nobody visible (taken out of batch 4 on 11 Nov as uninteresting): the only
+    aqua window on the facade, London civic life, empty without being dull; rippling water light loops naturally.
+    Wan 3.0 for its first take (it made the best empty room in batch 4), Gemini Omni as the fallback. Batch 5 still (13 Nov): GPT Image 2.5-flare o2, no edit. Video (13 Nov): Wan 3.0, 10 s 1080p 30 fps, $2.00; light ripples across the ceiling, the frame and the lights hold, no rule broken. It trembled (0.66 px), so --lock (0.08 px after). Its own sound is quiet street traffic, which suits a pool seen from the pavement. Loop 9.5 s, -40.3 LUFS, no flags.'
+- id: 17-old-man-with-newspaper
+  title: Old man with newspaper
+  kind: Home
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from the pavement, a Victorian bay window: an elderly Sikh man in a navy turban and a cardigan, sitting
+    in an armchair reading a broadsheet newspaper under a standard lamp, a mantel clock and framed family photos
+    behind him.'
+  motion: He breathes slowly and shifts the broadsheet slightly in his hands; the lamp glows steadily.
+  ambience: a ticking mantel clock
+  empty: false
+  still: media/stills/17-old-man-with-newspaper.jpg
+  raw: media/raw/17-old-man-with-newspaper_kling.mp4
+  loop: media/loops/17-old-man-with-newspaper.mp4
+  loop_settings:
+    start: 24
+    end: 197
+    blend: 12
+    volume: 4.416
+    bed: 'media/raw/17-old-man-with-newspaper_kling.mp4:6-10'
+    stabilize: false
+  notes: 'Batch 3, 9 Nov. Still: Gemini 3 Pro Image candidate c4, no edit. Video: Kling 4.0 through the Kling API
+    (pipeline/generate.py; trial pack, 15 units), still as first frame, 10 s, 1080p, native audio, no watermark (raw is a
+    clean 1920x1080, no crop needed); $2.12. No drift (under 0.01%). Sound muted: almost silent (-56.4 LUFS) and tagged
+    bird 0.14, which does not fit a November sitting room; no clock is audible. Start 24 and end 197 chosen as the closest
+    match of the reader and newspaper at the restart (7.21 s loop). Sound bed added 10 Nov (make_loop --bed): its own ticking mantel clock from 6 to 10 s, turned up; Kayvan listened and kept it; -42.0 LUFS in the loop, no music or speech flags.'
+- id: 18-plants-under-a-grow-light
+  title: Plants under a grow light
+  kind: Dark
+  model: Veo
+  status: cut
+  scene: 'Looking up from the street at a second-floor flat window: a dark room crowded with tropical houseplants,
+    lit only by the purple-pink glow of LED grow lights, a small fan on a shelf.'
+  motion: The fan turns slowly and the large leaves sway gently in its breeze.
+  ambience: the soft hum of a small fan
+  empty: true
+  notes: 'Replaces Cat asleep on the sill (9 Nov review): too close to 02 and 14. Was in batch 4 for a day (11 Nov); Kayvan did not like the scenario, so it is back in the backlog (stills kept in media/stills/18/). Cut 13 Nov: the project finishes at 30 windows.'
+- id: 19-teenager-gaming
+  title: Teenager gaming
+  kind: Home
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Looking up from the street at an upstairs bedroom window: a teenage girl with long box braids and headphones,
+    seen from behind at a desk playing a computer game, her face and the room lit by the glow of a monitor and a
+    colourful keyboard.'
+  motion: Coloured screen light shifts across the room and her hands make small movements on the keyboard and mouse.
+  ambience: faint keyboard and mouse clicks
+  empty: false
+  still: media/stills/19-teenager-gaming.jpg
+  raw: media/raw/19-teenager-gaming_kling.mp4
+  loop: media/loops/19-teenager-gaming.mp4
+  loop_settings:
+    start: 12
+    end: 180
+    blend: 12
+    volume: 1.0
+    stabilize: false
+  notes: 'Chosen 13 Nov for batch 5, the final six. Batch 5 still (13 Nov): Midjourney m4, upscaled (Subtle) to 2912x1632 as m5, Kayvan''s choice. Video (13 Nov): Kling 4.0, 10 s 1080p, $2.12; screen light shifts and her hands move, her face stays away, wobble 0.07 px. Its own sound is clean keyboard typing (0.75), kept. Loop 7.0 s, -39.6 LUFS, no flags.'
+- id: 20-board-game-in-the-conservatory
+  title: Board game in the conservatory
+  kind: Home
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from a neighbour''s upstairs window, looking down into a back garden conservatory: a family of four
+    (a South Asian mum and a white dad in their forties, their daughter of about ten and her younger brother of
+    about six) around a table playing a board game under fairy lights, plants all around, the children kneeling on
+    their chairs.'
+  motion: They lean over the board, considering the next move with small, natural movements; the boy rests his chin
+    on his hands; the fairy lights glow.
+  ambience: game pieces tapping softly on the board and a quiet garden at dusk
+  empty: false
+  still: media/stills/20-board-game-in-the-conservatory.jpg
+  raw: media/raw/20-board-game-in-the-conservatory_kling.mp4
+  loop: media/loops/20-board-game-in-the-conservatory.mp4
+  loop_settings:
+    start: 12
+    end: 197
+    blend: 12
+    volume: 0.6
+    bed: 'media/raw/23-after-the-dinner-party_omni.mp4:6-10'
+    stabilize: false
+  notes: 'Chosen 13 Nov for batch 5 in place of Bike repair shop, at Kayvan''s request; rewritten as a family of four
+    (parents, a girl and her younger brother). The only whole family on the facade. Laughter taken out of the ambience
+    (it invites voices). Batch 5 still (13 Nov): GPT Image 2.5-flare o3, no edit; all four in place, the children kneeling on their chairs. Video (13 Nov): Kling 4.0, 10 s 1080p, $2.12; the dad reaches over the board, the children lean in, wobble 0.03 px. Its own sound was speech throughout (0.38 to 0.65), so the bed is the quiet street of the 23 Omni take (6 to 10 s; 23 uses the whole clip, on page 3). A first bed from the 34 Wan take tagged speech 0.25 and had a loud click. Loop 7.71 s, -37.4 LUFS, no flags; tagged animal 0.25, worth a listen.'
+- id: 21-oven-light
+  title: Oven light
+  kind: Dark
+  model: Veo
+  status: cut
+  scene: 'Seen from the pavement into a dark kitchen at the front of a house: the room dark except for the warm
+    glow of an oven light, something baking inside.'
+  motion: The oven light glows, a little heat shimmer and steam rise from the oven door.
+  ambience: the low hum of an oven fan
+  empty: true
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 22-man-ironing
+  title: Man ironing
+  kind: Home
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'From across the street, a second-floor mansion block window: a Middle Eastern man in his thirties with
+    a short beard, ironing a shirt on an ironing board under a warm ceiling light, a pile of folded laundry beside
+    him.'
+  motion: He moves the iron slowly back and forth across the shirt and a soft puff of steam rises.
+  ambience: the hiss of the iron's steam
+  empty: false
+  still: media/stills/22-man-ironing.jpg
+  raw: media/raw/22-man-ironing_kling.mp4
+  loop: media/loops/22-man-ironing.mp4
+  loop_settings:
+    start: 12
+    end: 200
+    blend: 12
+    volume: 0.5
+    bed: 'media/raw/28-nursery-night-light_omni_rejected.mp4:0-10'
+    stabilize: false
+  notes: 'Batch 4 still (11 Nov): Midjourney V8, m4 upscaled (Subtle) to 2912x1632 candidate m5, no edit. Video (11 Nov): Kling 4.0, still as first frame, 10 s 1080p, $2.12; casting held, the iron moves and a puff of steam rises, wobble 0.03 px. Kling added music (0.40), so the sound is a bed of distant traffic from the rejected Omni take of 28. The Wan take (media/raw/22-man-ironing_wan_rejected.mp4) billowed too much steam, softened his face and added clarinet and piano. Loop -43.6 LUFS, no flags.'
+- id: 23-after-the-dinner-party
+  title: After the dinner party
+  kind: Quiet
+  model: Gemini Omni 1.2 Flash (Gemini API)
+  status: done
+  scene: 'From across the street, a third-floor mansion block window: an empty dining room after a dinner party,
+    candles still burning on the table, plates and glasses left, chairs pushed back.'
+  motion: The candle flames flicker gently.
+  ambience: a quiet room and the distant street
+  empty: true
+  still: media/stills/23-after-the-dinner-party.jpg
+  raw: media/raw/23-after-the-dinner-party_omni.mp4
+  loop: media/loops/23-after-the-dinner-party.mp4
+  loop_settings:
+    start: 12
+    end: 219
+    blend: 12
+    volume: 0.3
+    stabilize: false
+    lock: true
+  notes: 'Batch 3, 9 Nov, the first API window (pipeline/generate.py). Still: Gemini 3 Pro Image candidate c2, edited
+    once to remove two people at the back of the room and reflected lettering on the glass. Video: Gemini Omni 1.2
+    Flash (Veo 3.1 is no longer on the Gemini API), 10 s, 1080p, with the still sent as both first and last frame;
+    $1.05. Omni does not keep the still exactly (slight reframe), but the take is steady (drift under 0.02%) and the
+    room stays empty. End 219 is the closest match to the frames before the start among ends from 200. Sound: -30.4
+    LUFS raw (vehicle, rain, animal 0.15 tags; no music or speech); Kayvan listened and kept it; -40.6 LUFS in the
+    loop. Rebuilt 9 Nov with make_loop --lock to remove frame-to-frame shake the smooth stabiliser left in (wobble 0.19 to 0.03 px rms at 1080p).'
+- id: 24-video-call
+  title: Video call
+  kind: Home
+  model: Veo
+  status: cut
+  scene: 'From across the street, a fourth-floor mansion block window: a young woman in a soft grey hijab with headphones,
+    on a video call at a laptop on a desk, her face lit by the screen, seen side-on.'
+  motion: She listens and nods slowly, her face lit by the shifting light of the screen.
+  ambience: a quiet room and a faint laptop fan
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 25-painter-in-the-attic
+  title: Painter in the attic
+  kind: Home
+  model: Kling
+  status: cut
+  scene: 'Looking up at a top-floor attic window: an older white woman with silver hair in a paint-splattered apron,
+    seen side-on painting at an easel in a cluttered attic studio, canvases leaning on the walls, a work lamp.'
+  motion: The artist makes slow brush strokes on the canvas.
+  ambience: rain pattering on the roof
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 26-jigsaw-on-the-rug
+  title: Jigsaw on the rug
+  kind: Home
+  model: Kling
+  status: cut
+  scene: 'From a tower opposite, at the same height, a high-rise flat with floor-to-ceiling glass: two men in their
+    thirties, one Black and one white, lying side by side on a rug assembling a large jigsaw puzzle, pendant lights
+    above, the city reflected in the glass.'
+  motion: They slowly try pieces and fit one into place, with small, relaxed movements.
+  ambience: a quiet room and the hum of the city
+  empty: false
+  notes: 'Replaces Swaying in the kitchen (9 Nov review): swaying needs music, and 06 is already a high-rise kitchen. Cut 13 Nov: the project finishes at 30 windows.'
+- id: 27-evening-stretch
+  title: Evening stretch
+  kind: Home
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'From a tower opposite, a high-rise flat with floor-to-ceiling glass: a South Asian man in his fifties
+    on a yoga mat in an open living room holding a gentle stretch, plants and a lamp nearby.'
+  motion: He breathes slowly and shifts gently within the stretch.
+  ambience: slow breathing in a quiet room
+  empty: false
+  still: media/stills/27-evening-stretch.jpg
+  raw: media/raw/27-evening-stretch_kling.mp4
+  loop: media/loops/27-evening-stretch.mp4
+  loop_settings:
+    start: 12
+    end: 156
+    blend: 12
+    volume: 1.0
+    bed: 'media/raw/27-evening-stretch_wan_rejected.mp4:0-10'
+    stabilize: false
+  notes: 'Moved from Veo to Kling for batch 4 (10 Nov): Gemini Omni recast a person on 45, so people scenes go to Kling. Batch 4 still (11 Nov): GPT Image 2.5-flare candidate o4, no edit. Video (11 Nov): Kling 4.0, 10 s 1080p, $2.12; a gentle shift in the seated stretch, wobble 0.03 px. Bed: soft breathing and sighs from the rejected Wan take (which pushed the camera in 2.6%). End 156 is the closest match to the frames before the start. Loop -44.7 LUFS, no flags.'
+- id: 28-nursery-night-light
+  title: Nursery night light
+  kind: Dark
+  model: Wan 3.0 (Alibaba Cloud Model Studio)
+  status: done
+  scene: 'From a tower opposite, a high-rise flat bedroom window: a dimly lit nursery, a star projector casting
+    drifting stars on the ceiling, a cot mobile above an empty cot.'
+  motion: The stars drift slowly across the ceiling and the mobile turns gently.
+  ambience: the soft hush of a white-noise machine
+  empty: true
+  still: media/stills/28-nursery-night-light.jpg
+  raw: media/raw/28-nursery-night-light_wan.mp4
+  loop: media/loops/28-nursery-night-light.mp4
+  loop_settings:
+    start: 12
+    end: 176
+    blend: 12
+    volume: 0.25
+    bed: 'media/raw/46-boutique-at-night_omni.mp4:3-10'
+    stabilize: false
+  notes: 'Batch 4 still (11 Nov): GPT Image 2.5-flare candidate o2, no edit. Video (11 Nov): Wan 3.0 (first Wan window), still as first frame, 10 s 1080p 30 fps, $2.00; the mobile turns clearly, wobble 0.02 px. Its own sound was near silent with a borderline music tag, so the bed is the white-noise hiss of the Omni boutique take (3 to 10 s), as a white-noise machine. The Omni take (media/raw/28-nursery-night-light_omni_rejected.mp4) barely moved and trembled. Loop -44.5 LUFS, no flags.'
+- id: 29-three-windows-three-lives
+  title: Three windows, three lives
+  kind: Home
+  model: Veo
+  status: cut
+  scene: 'From a tower opposite, a straight-on view of three neighbouring flat windows side by side: left window
+    dark, middle window lit blue by a television, right window an older Caribbean woman in a colourful headwrap
+    watering houseplants on the sill.'
+  motion: The television light flickers in the middle window; the woman slowly waters a plant.
+  ambience: the hum of the city and a light wind
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 30-laundry-rack
+  title: Laundry rack
+  kind: Quiet
+  model: Veo
+  status: cut
+  scene: 'From a tower opposite, a high-rise flat with floor-to-ceiling glass: an empty room with laundry drying
+    on a rack by the glass, a window left ajar, a lamp left on, a sheer curtain.'
+  motion: The sheer curtain stirs gently. The lamp glows.
+  ambience: wind brushing softly against the glass
+  empty: true
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 31-stairwell-light
+  title: Stairwell light
+  kind: Dark
+  model: Veo
+  status: cut
+  scene: 'From the street, the tall glass stairwell of a block of flats: an empty stairwell lit by a single timer
+    light on one landing, other floors dark.'
+  motion: The light flickers slightly, as fluorescent tubes do.
+  ambience: a faint electrical hum and distant traffic
+  empty: true
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 32-bedtime-story
+  title: Bedtime story
+  kind: Home
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'From an upstairs neighbour, looking down into a glass kitchen extension at the back of a terrace: a Black
+    dad in his thirties reading a bedtime story to his small son on a sofa, a blanket, a reading lamp.'
+  motion: The dad reads quietly and turns a page slowly; the boy leans against him and listens.
+  ambience: rain falling softly on the glass roof
+  empty: false
+  still: media/stills/32-bedtime-story.jpg
+  raw: media/raw/32-bedtime-story_kling.mp4
+  loop: media/loops/32-bedtime-story.mp4
+  loop_settings:
+    start: 12
+    end: 168
+    blend: 12
+    volume: 0.3
+    bed: 'media/raw/10-corner-shop_veo-quality.mp4:4-7.8'
+    stabilize: false
+  notes: 'Chosen 13 Nov for batch 5, the final six. Batch 5 still (13 Nov): GPT Image 2.5-flare o2, no edit. Video (13 Nov): Kling 4.0, 10 s 1080p, $2.12; the dad reads and turns the page, wobble 0.02 px. Its own sound had thunder, pigeons and music, so the bed is the steady rain of the 10 corner shop Veo take (4 to 7.8 s). Loop 6.5 s, -40.2 LUFS, no flags (thunder 0.19).'
+- id: 33-phone-glow
+  title: Phone glow
+  kind: Dark
+  model: Veo
+  status: cut
+  scene: 'Looking up at an upstairs bedroom window: a dark bedroom, someone asleep under a duvet, only a phone screen
+    glowing on the bedside table.'
+  motion: Someone breathes gently under the duvet and the phone screen glows softly on the bedside table.
+  ambience: near silence and a car passing in the distance
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 34-florist-closing
+  title: Florist closing
+  kind: Shop
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from the pavement, a flower shop after closing: an East Asian florist in her thirties with a short
+    bob, at the counter arranging tulips in a bucket, buckets of flowers all around.'
+  motion: She slowly arranges the tulips.
+  ambience: rustling paper in a quiet shop
+  empty: false
+  still: media/stills/34-florist-closing.jpg
+  raw: media/raw/34-florist-closing_kling.mp4
+  loop: media/loops/34-florist-closing.mp4
+  loop_settings:
+    start: 12
+    end: 156
+    blend: 12
+    volume: 0.8
+    bed: 'media/raw/34-florist-closing_wan_rejected.mp4:8-10'
+    stabilize: false
+  notes: 'Batch 4 still (11 Nov): GPT Image 2.5-flare candidate o2, no edit. Video (11 Nov): Kling 4.0, 10 s 1080p, $2.12; she works the tulips, wobble 0.03 px. Kling''s sound was birds, pigeons and a chicken, so the bed is rain on the pavement from the rejected Wan take (8 to 10 s, the stretch without raindrop clicks). The Wan take moved as naturally but trembled (0.75 px). Loop -37.2 LUFS, no flags.'
+- id: 35-baker-and-flour
+  title: Baker and flour
+  kind: Shop
+  model: Kling
+  status: cut
+  scene: 'Seen from the pavement, a small bakery: a Latino baker in his forties with a dusting of flour on his apron,
+    shaping dough at a floured bench, racks of bread behind, flour dust in the light.'
+  motion: The baker slowly kneads the dough, flour dust drifts in the light.
+  ambience: the hum of an oven fan and dough pressed softly on the bench
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 36-chip-shop
+  title: Chip shop
+  kind: Shop
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from the pavement, a fish and chip shop: a server in her twenties with dyed red hair and a nose ring
+    behind the counter, steam rising from the fryers, a builder in a hi-vis jacket waiting.'
+  motion: Steam rises steadily from the fryers and the server makes small movements behind the counter.
+  ambience: fryers sizzling and an extractor fan humming
+  empty: false
+  still: media/stills/36-chip-shop.jpg
+  raw: media/raw/36-chip-shop_kling.mp4
+  loop: media/loops/36-chip-shop.mp4
+  loop_settings:
+    start: 12
+    end: 168
+    blend: 12
+    volume: 0.15
+    bed: 'media/raw/36-chip-shop_kling.mp4:8-10'
+    stabilize: false
+  notes: 'Chosen 13 Nov for batch 5, the final six. Moved from Veo to Kling for batch 5 (13 Nov): people scenes go to Kling. Batch 5 still (13 Nov): GPT Image 2.5-flare o2, no edit. Video (13 Nov): Kling 4.0, 10 s 1080p, $2.12; fryer steam rises, the server works, the builder waits, wobble 0.03 px. Its own sound had music and speech until 8 s, so the bed is its last 2 s, a wet street. Loop 6.5 s, -39.2 LUFS, no flags.'
+- id: 37-bookshop
+  title: Bookshop
+  kind: Shop
+  model: Veo
+  status: cut
+  scene: 'Seen from the pavement, an independent bookshop: a young South Asian woman with a canvas tote bag browsing
+    a shelf, the owner (an older white man with half-moon glasses) at a desk with a lamp, a cat asleep on a stack
+    of books.'
+  motion: The customer tilts her head to read the spines; the owner sits still under the lamp and the cat breathes
+    slowly.
+  ambience: a quiet shop and the soft tick of a clock
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 38-treadmill-runner
+  title: Treadmill runner
+  kind: Shop
+  model: Veo
+  status: cut
+  scene: 'Looking up at a first-floor gym window: a Black woman in her thirties running on a treadmill, the other
+    machines empty, strip lights.'
+  motion: The runner runs at a steady pace on the treadmill.
+  ambience: the steady hum and soft thud of the treadmill
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 39-ballet-barre
+  title: Ballet barre
+  kind: Shop
+  model: Kling
+  status: cut
+  scene: 'Looking up at a first-floor dance studio window: three dancers of different backgrounds, ages and body
+    types, including a teenage boy, at the barre doing slow, repeated movements, mirrors behind.'
+  motion: They do slow, repeated knee bends at the barre.
+  ambience: soft footfalls on a wooden floor
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 40-late-at-the-office
+  title: Late at the office
+  kind: Shop
+  model: Veo
+  status: cut
+  scene: 'From across the street, an office floor after hours: an East Asian woman in her thirties working late at
+    a desk lit by a monitor, the rest of the office dark, a cleaner''s trolley in the aisle.'
+  motion: The worker types slowly, the monitor light flickers.
+  ambience: the quiet hum of an empty office
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 41-table-for-two
+  title: Table for two
+  kind: Shop
+  model: Kling
+  status: cut
+  scene: 'Seen from the pavement, a small restaurant window: an older couple in their seventies, a Black man in
+    a tweed jacket and a white woman with a grey bob, at a candlelit table for two, talking, a waiter in the background.'
+  motion: They lean towards each other and smile, and the candlelight flickers on the table.
+  ambience: an indistinct murmur of diners and cutlery on plates
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 42-the-corner-pub
+  title: The corner pub
+  kind: Shop
+  model: Veo
+  status: cut
+  scene: 'Seen from the pavement, a traditional pub window with frosted glass: a few figures of different ages and
+    backgrounds at the bar in warm light, beer pumps, mostly soft silhouettes through the glass.'
+  motion: Small movements at the bar, warm light flickers.
+  ambience: an indistinct murmur and glasses clinking
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 43-hair-salon
+  title: Hair salon
+  kind: Shop
+  model: Veo
+  status: cut
+  scene: 'Seen from the pavement, a hair salon: a South Asian hairdresser blow-drying the long curly hair of a seated
+    Black woman in front of a mirror.'
+  motion: Her hair moves in the air from the dryer.
+  ambience: the hum of a hairdryer
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 44-tailor-at-the-machine
+  title: Tailor at the machine
+  kind: Shop
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from the pavement, a small tailor and repair shop: an elderly Black tailor with round glasses at
+    a sewing machine under a lamp, fabric feeding through, rolls of cloth behind.'
+  motion: The sewing machine runs and the fabric moves slowly through it.
+  ambience: the whirr of a sewing machine
+  empty: false
+  still: media/stills/44-tailor-at-the-machine.jpg
+  raw: media/raw/44-tailor-at-the-machine_kling.mp4
+  loop: media/loops/44-tailor-at-the-machine.mp4
+  loop_settings:
+    start: 12
+    end: 156
+    blend: 12
+    volume: 0.389
+    bed: 'media/raw/02-cat-15th-floor_veo.mp4:0-8'
+    stabilize: false
+  notes: 'Batch 3, 9 Nov. Still: Gemini 3 Pro Image candidate c1, edited twice (removed pedestrians and a bus, turned
+    him to profile; then his eyes down on the needle, since the first edit had him looking off to the right). Video: Kling
+    4.0 through the Kling API (pipeline/generate.py; trial pack, 15 units), still as first frame, 10 s, 1080p, native
+    audio, no watermark (raw is a clean 1920x1080, no crop needed); $2.12. No drift (under 0.01%). Sound muted: Kling
+    added music (tagged 0.59) and speech (0.21). Cars pass on the far street, so the restart match worsens with length:
+    end 156 is the closest match and gives exactly the 6.0 s minimum. Sound bed added 10 Nov (make_loop --bed): a steady, distant city hum from the 02 raw clip, as room tone; Kayvan listened and kept it; -41.1 LUFS in the loop, no music or speech flags.'
+- id: 45-village-pub-by-the-fire
+  title: Village pub by the fire
+  kind: Shop
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from a dark country lane on the rural edge of London, the small leaded window of an old village pub:
+    low oak beams, a log fire burning in a wide inglenook, a black Labrador asleep on the flagstones in front of
+    it, and two older locals at a small table with half-finished pints (a white man in a wax jacket and a Black
+    woman with short grey hair), warm lamp light.'
+  motion: The fire flickers in the inglenook, the dog breathes slowly in its sleep, and the two locals sit close
+    together talking quietly, their hands resting on the table beside their glasses.
+  ambience: a crackling log fire and a low, indistinct murmur
+  empty: false
+  still: media/stills/45-village-pub-by-the-fire.jpg
+  raw: media/raw/45-village-pub-by-the-fire_kling.mp4
+  loop: media/loops/45-village-pub-by-the-fire.mp4
+  loop_settings:
+    start: 24
+    end: 197
+    blend: 12
+    volume: 1.303
+    bed: 'media/raw/45-village-pub-by-the-fire_omni_rejected.mp4:0-10'
+    stabilize: false
+  notes: 'Added 9 Nov: the countryside pub, placed in a Greater London village so the facade stays London. Replaces
+    Pizza oven (too close to 13). Batch 3, 9 Nov. Still: Gemini 3 Pro Image candidate c4, no edit. First take on Gemini
+    Omni 1.2 Flash (kept as media/raw/45-village-pub-by-the-fire_omni_rejected.mp4, $1.05) recast the Black woman as a
+    white man from the first frame and had him lift his pint to drink, so the window moved to Kling with the motion
+    reworded (hands resting beside the glasses). Video: Kling 4.0 through the Kling API (pipeline/generate.py; trial pack,
+    15 units), still as first frame, 10 s, 1080p, native audio, no watermark (raw is a clean 1920x1080, no crop needed);
+    $2.12. Casting held and nobody drinks. No drift (under 0.01%). Sound muted: Kling added speech (0.60) and music
+    (0.22); a pub murmur could be kept at 0.25 after a listen. Start 24 and end 197 chosen as the closest match of the two
+    locals at the restart (7.21 s loop). Sound bed added 10 Nov (make_loop --bed): fire crackle and a faint murmur from the rejected Omni take; Kayvan listened and kept it; -38.0 LUFS in the loop, no music or speech flags.'
+- id: 46-boutique-at-night
+  title: Boutique after closing
+  kind: Quiet
+  model: Gemini Omni 1.2 Flash (Gemini API)
+  status: done
+  scene: 'Seen from the pavement, a closed clothes boutique: mannequins in the window under a single spotlight,
+    the shop dark behind, a neon sign with no readable text.'
+  motion: The neon sign hums and flickers faintly.
+  ambience: the faint buzz of a neon sign
+  empty: true
+  still: media/stills/46-boutique-at-night.jpg
+  raw: media/raw/46-boutique-at-night_omni.mp4
+  loop: media/loops/46-boutique-at-night.mp4
+  loop_settings:
+    start: 12
+    end: 191
+    blend: 12
+    volume: 0.5
+    bed: 'media/raw/46-boutique-at-night_wan_rejected.mp4:0-10'
+    stabilize: false
+    lock: true
+  notes: 'Moved into batch 4 (11 Nov) in place of 49. Batch 4 still (11 Nov): GPT Image 2.5-flare candidate o2, no edit. Video (11 Nov): Gemini Omni 1.2 Flash, 10 s 1080p, $1.04; a quiet, nearly still shop window; --lock took the wobble from 0.14 to 0.04 px. Its own sound was hiss with a borderline music tag, so the bed is the street traffic of the rejected Wan take, in which the neon sign switched on halfway with a glyph like a character. Loop -44.6 LUFS, no flags.'
+- id: 47-bike-repair-shop
+  title: Bike repair shop
+  kind: Shop
+  model: Kling
+  status: cut
+  scene: 'Seen from the pavement, a small bicycle repair shop after closing: a mechanic in her twenties with a shaved
+    head and work overalls, seen side-on, truing a wheel on a bike stand, bicycles hanging from hooks on the walls,
+    a work lamp.'
+  motion: The wheel spins slowly and steadily on the stand while she watches it closely, a spoke key in her hand.
+  ambience: the soft ticking of a spinning freewheel
+  empty: false
+  notes: 'Replaces Pet shop tanks (9 Nov review): too close to 09. Chosen 13 Nov for batch 5, the final six; cut the same day in favour of 20 (Kayvan).'
+- id: 48-cards-at-the-community-centre
+  title: Cards at the community centre
+  kind: Shop
+  model: Kling
+  status: cut
+  scene: 'Seen from the pavement, a community centre window: three older people playing cards at a table under fluorescent
+    light with cups of tea: a Black man in a flat cap, a white woman with curled grey hair, and a South Asian man
+    in a sleeveless jumper.'
+  motion: They study their cards, small natural movements.
+  ambience: an indistinct murmur and teacups on saucers
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'
+- id: 49-evening-service
+  title: Evening service
+  kind: Quiet
+  model: Kling 4.0 (Kling API)
+  status: done
+  scene: 'Seen from the church porch at dusk, through the glazed inner doors of a small, cosy Victorian parish
+    church: an evening service under way, warm lamplight on stone arches and dark wooden pews, the pews full of a
+    congregation of all ages and backgrounds seen from behind, a woman priest in a white surplice at the altar far
+    ahead with her back to the door, tall candles burning on the altar.'
+  motion: The congregation sit still with heads bowed in silent prayer, breathing softly, and the altar candles
+    flicker.
+  ambience: a hushed church, the creak of a pew and a soft cough
+  empty: false
+  still: media/stills/49-evening-service.jpg
+  raw: media/raw/49-evening-service_kling.mp4
+  loop: media/loops/49-evening-service.mp4
+  loop_settings:
+    start: 12
+    end: 181
+    blend: 12
+    volume: 1.2
+    bed: 'media/raw/49-evening-service_wan_rejected.mp4:0-10'
+    stabilize: false
+  notes: 'Rewritten 11 Nov at Kayvan''s request (was Candles in an empty church, which every model drew with an
+    impossible street-level plate-glass window): a service seen from the door of a cosy traditional church, many
+    people. Seen through the glazed porch doors so it is still a window. The moment is silent prayer because the
+    house rules allow no singing, organ or words in the sound. People seen from behind, so faces are turned away
+    naturally. Kling, since it is a people scene. Replaces 18 in batch 4. Batch 4 still (11 Nov): GPT Image 2.5-flare candidate o2, no edit (runners-up: Gemini c2, sharpest; Midjourney m1, most atmospheric but the priest stands in the aisle and might walk). Video (11 Nov): Kling 4.0, 10 s 1080p, $2.12; the congregation stays almost still, wobble 0.02 px. Kling''s sound had a faint murmur (speech 0.22) and a timpani-like thud, so the bed is the hushed breathing and sighs of the rejected Wan take, which was a near tie. Loop -45.0 LUFS, no flags.'
+- id: 50-ramen-bar
+  title: Ramen bar
+  kind: Shop
+  model: Veo
+  status: cut
+  scene: 'Seen from the pavement, a small ramen bar: a young white chef with a bandana behind the counter, steam
+    rising from bowls, two diners at the counter seen from behind.'
+  motion: Steam rises, the chef makes small movements at the counter.
+  ambience: simmering broth and an indistinct murmur
+  empty: false
+  notes: 'Cut 13 Nov: the project finishes at 30 windows.'

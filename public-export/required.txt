@@ -1,0 +1,20 @@
+# public-export/required.txt
+#
+# Files that MUST exist in the exported tree; the publish fails if any is missing.
+
+README.md
+LICENSE
+.gitignore
+requirements.txt
+scenes/scenes.yaml
+pipeline/generate.py
+pipeline/mosaic.py
+pipeline/make_loop.py
+layouts/facade-landscape.yaml
+layouts/facade-pages.yaml
+layouts/short-2pages.yaml
+docs/FINDINGS.md
+docs/ARCHITECTURE.md
+docs/PUBLIC_REPO_SCOPE.md
+docs/assets/landscape-page-1.jpg
+scripts/publish_public_mirror.py

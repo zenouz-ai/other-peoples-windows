@@ -1,0 +1,27 @@
+# public-export/manifest.txt
+#
+# Allowlist of paths that may be copied into the public mirror (zenouz-ai/other-peoples-windows).
+# Anything NOT matched here is never exported. A directory entry includes everything beneath it,
+# subject to denylist.txt. Blank lines and lines beginning with '#' are ignored.
+
+# --- Code, data and layouts ---
+pipeline
+scenes/scenes.yaml
+layouts
+requirements.txt
+requirements-audio.txt
+.gitignore
+
+# --- Generated briefs and measured scorecards ---
+docs/batch-02.md
+docs/batch-04.md
+docs/batch-05.md
+docs/batch-04-scorecard.md
+docs/batch-05-scorecard.md
+
+# --- The publishing framework (the private identifier list and substitutions stay private) ---
+scripts/publish_public_mirror.py
+public-export/manifest.txt
+public-export/denylist.txt
+public-export/required.txt
+public-export/secret-patterns.txt

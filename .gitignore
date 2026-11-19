@@ -1,0 +1,24 @@
+# Media and renders are large and live outside Git.
+# media/ syncs to iCloud Drive (that is its backup); output/ is a symlink to output.nosync/,
+# which iCloud skips because renders can always be rebuilt.
+media/
+output
+output/
+output.nosync/
+
+# Secrets for the API pipeline
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# macOS
+.DS_Store
+._*
+
+# zenouz.ai exports (their home is the website repository)
+web/*.mp4
+web/*.jpg

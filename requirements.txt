@@ -1,0 +1,5 @@
+numpy>=1.26
+opencv-python-headless>=4.9
+PyYAML>=6.0
+static-ffmpeg>=2.5   # ffmpeg/ffprobe fallback when they are not on PATH
+reportlab>=4.0       # batch brief PDFs (pipeline/prompts.py brief)

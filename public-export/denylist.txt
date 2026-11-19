@@ -1,0 +1,34 @@
+# public-export/denylist.txt
+#
+# Hard exclusions applied AFTER the manifest allowlist (gitignore-style globs over the repo-relative
+# path, case-insensitive). Blank lines and lines beginning with '#' are ignored.
+
+# --- Assistant context and editor settings ---
+CLAUDE.md
+AGENTS.md
+.vscode/**
+
+# --- Secrets ---
+.env
+.env.*
+
+# --- Media, renders, ledger (never tracked, denied as a backstop) ---
+media/**
+output/**
+output.nosync/**
+web/*.mp4
+web/*.jpg
+**/*.mp4
+**/generate-ledger.jsonl
+
+# --- Private working notes and plans ---
+docs/log.md
+docs/archive/roadmap.md
+docs/archive/final-plan.md
+docs/plan-*.md
+docs/archive/**
+**/*.pdf
+
+# --- Private halves of the publishing framework ---
+public-export/forbidden-content.txt
+public-export/content-scrub.txt

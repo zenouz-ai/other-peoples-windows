@@ -1,0 +1,64 @@
+# The YouTube Short (13 Nov): two pages of the twelve strongest windows, about 2 min 13 s (Shorts allow 3 minutes).
+# Same geometry, windows and timing as facade-pages.yaml. Originally from facade-pages.yaml:
+# The growing facade: every "page" is one 9:16 screen laid out exactly like the published
+# six-window poster (same window sizes, overlaps and close-up framing), and pages stack downwards.
+# The camera tours page 1 window by window, scrolls down to page 2, tours it, and so on, then
+# scrolls back to the top so the film loops.
+#
+# To add a page: define the six new windows under `windows`, then add a page mapping slot -> window id.
+# Pages follow the running order at the bottom of this file (dusk to bedtime, decided 13 Nov).
+canvas: {width: 2160, gap: 12, background: "#0b0e13"}
+output: {width: 2160, height: 3840}
+# hold 6 s (one 6 to 10 s loop per close-up) makes each page about 64 s: 1 page 69 s, 2 pages 133 s, 9 pages 9.5 min.
+timing: {intro_hold: 10, zoom_in: 1.3, hold: 6, zoom_out: 1.3, gap: 0.8, page_hold: 2, end_hold: 3, scroll_seconds_per_screen: 3}
+
+slots:   # the published poster's geometry: [x, y, width, height] within one page
+  top_wide:     {rect: [12, 12, 2136, 1263]}
+  left_small:   {rect: [12, 1287, 1062, 627]}
+  middle_wide:  {rect: [12, 1926, 2136, 1263]}
+  bottom_small: {rect: [12, 3201, 1062, 627]}
+  inset_upper:  {rect: [848, 1183, 1300, 731], layer: 1}
+  inset_lower:  {rect: [788, 3063, 1360, 765], layer: 1}
+slot_order: [top_wide, left_small, middle_wide, bottom_small, inset_lower, inset_upper]   # tour order within a page
+
+windows:   # focus = [x fraction, y fraction, close-up width as a fraction of the window width]
+  - {id: dinner,   file: media/loops/05-dinner-through-house.mp4, focus: [0.47, 0.42, 0.50]}
+  - {id: cat,      file: media/loops/02-cat-15th-floor.mp4,       focus: [0.66, 0.62, 0.52]}
+  - {id: cafe,     file: media/loops/03-cafe.mp4,                 focus: [0.60, 0.52, 0.52]}
+  - {id: highrise, file: media/loops/06-highrise-dad-cooking.mp4, focus: [0.42, 0.60, 0.62]}
+  - {id: terrace,  file: media/loops/01-terrace-couple.mp4,       focus: [0.62, 0.55, 0.72], gain: 0.35}
+  - {id: dog,      file: media/loops/04-dog-fetch.mp4,            focus: [0.50, 0.64, 0.54]}
+  # batch 2
+  - {id: launderette, file: media/loops/07-launderette.mp4,               focus: [0.45, 0.52, 0.55]}
+  - {id: xmas-tree,   file: media/loops/08-christmas-tree-empty-room.mp4, focus: [0.52, 0.45, 0.45]}
+  - {id: fish-tank,   file: media/loops/09-fish-tank-in-the-dark.mp4,     focus: [0.40, 0.52, 0.45]}
+  - {id: corner-shop, file: media/loops/10-corner-shop.mp4,               focus: [0.48, 0.48, 0.55]}
+  - {id: potter,      file: media/loops/11-potter-at-the-wheel.mp4,       focus: [0.58, 0.55, 0.52]}
+  - {id: barber,      file: media/loops/12-barber-sweeping-up.mp4,        focus: [0.46, 0.58, 0.40]}
+  - {id: pizza,       file: media/loops/13-pizza-night.mp4,               focus: [0.53, 0.55, 0.42]}
+  - {id: knitting,    file: media/loops/14-knitting-with-a-cat.mp4,       focus: [0.60, 0.58, 0.30]}
+  # batch 3 (API: pipeline/generate.py)
+  - {id: reader,      file: media/loops/17-old-man-with-newspaper.mp4,    focus: [0.40, 0.55, 0.50]}
+  - {id: dinner-party, file: media/loops/23-after-the-dinner-party.mp4,   focus: [0.68, 0.62, 0.50]}
+  - {id: tailor,      file: media/loops/44-tailor-at-the-machine.mp4,     focus: [0.66, 0.55, 0.45]}
+  - {id: village-pub, file: media/loops/45-village-pub-by-the-fire.mp4,   focus: [0.38, 0.58, 0.50]}
+  # batch 4 (the model shoot-out: Kling 4.0 for people, Wan 3.0 for 28, Omni for 46)
+  - {id: service,     file: media/loops/49-evening-service.mp4,           focus: [0.50, 0.50, 0.55]}
+  - {id: nursery,     file: media/loops/28-nursery-night-light.mp4,       focus: [0.55, 0.55, 0.55]}
+  - {id: stretch,     file: media/loops/27-evening-stretch.mp4,           focus: [0.38, 0.55, 0.50]}
+  - {id: boutique,    file: media/loops/46-boutique-at-night.mp4,         focus: [0.52, 0.58, 0.55]}
+  - {id: ironing,     file: media/loops/22-man-ironing.mp4,               focus: [0.55, 0.50, 0.50]}
+  - {id: florist,     file: media/loops/34-florist-closing.mp4,           focus: [0.57, 0.50, 0.50]}
+  # batch 5, the final six (Kling 4.0 for people, Wan 3.0 for the pool)
+  - {id: board-game,  file: media/loops/20-board-game-in-the-conservatory.mp4, focus: [0.40, 0.50, 0.50]}
+  - {id: pool,        file: media/loops/16-pool-after-hours.mp4,          focus: [0.50, 0.50, 0.60]}
+  - {id: gamer,       file: media/loops/19-teenager-gaming.mp4,           focus: [0.50, 0.50, 0.55]}
+  - {id: basement,    file: media/loops/15-basement-kitchen.mp4,          focus: [0.48, 0.50, 0.60]}
+  - {id: bedtime,     file: media/loops/32-bedtime-story.mp4,             focus: [0.58, 0.58, 0.45]}
+  - {id: chip-shop,   file: media/loops/36-chip-shop.mp4,                 focus: [0.45, 0.45, 0.55]}
+
+pages:
+  # 1 Dusk
+  - {top_wide: chip-shop, left_small: basement, middle_wide: dinner, bottom_small: florist, inset_lower: potter, inset_upper: service}
+  # 2 Night, ending on the bedtime story
+  - {top_wide: board-game, left_small: gamer, middle_wide: pool, bottom_small: nursery, inset_lower: village-pub, inset_upper: bedtime}

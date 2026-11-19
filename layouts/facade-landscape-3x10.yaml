@@ -1,0 +1,64 @@
+# Landscape facade, three pages of 10 (16 Nov 2026): the same 30 windows and timing as facade-landscape.yaml
+# (the published 13 Nov film, five pages of six), re-cut so the film opens on a fuller wall. Each page is one
+# 16:9 screen (3840x2160) on a 4x4 grid of 16:9 cells: two large windows (2x2 cells) in opposite corners and
+# four small ones in each of the other two quarters, so no clip is cropped. Pages stack down the building and
+# the camera tours each page, then scrolls to the next. Plan: docs/archive/plan-fuller-pages.md.
+canvas: {width: 3840, gap: 12, background: "#0b0e13"}
+output: {width: 3840, height: 2160}
+timing: {intro_hold: 10, zoom_in: 1.3, hold: 6, zoom_out: 1.3, gap: 0.8, page_hold: 2, end_hold: 3, scroll_seconds_per_screen: 3}
+
+slots:   # [x, y, width, height] within one page; cells 945x525 with 12 px gaps, named by row and column (r0c2 = top row, third column)
+  big_tl: {rect: [12, 12, 1902, 1062]}       # top-left quarter
+  r0c2:   {rect: [1926, 12, 945, 525]}
+  r0c3:   {rect: [2883, 12, 945, 525]}
+  r1c3:   {rect: [2883, 549, 945, 525]}
+  r1c2:   {rect: [1926, 549, 945, 525]}
+  big_br: {rect: [1926, 1086, 1902, 1062]}   # bottom-right quarter
+  r3c1:   {rect: [969, 1623, 945, 525]}
+  r2c1:   {rect: [969, 1086, 945, 525]}
+  r2c0:   {rect: [12, 1086, 945, 525]}
+  r3c0:   {rect: [12, 1623, 945, 525]}
+slot_order: [big_tl, r0c2, r0c3, r1c3, r1c2, big_br, r3c1, r2c1, r2c0, r3c0]   # tour: large, four small clockwise, large, four small clockwise; ends bottom left
+
+windows:   # focus = [x fraction, y fraction, close-up width as a fraction of the window width]
+# gain (16 Nov): sealed windows high up are heard faintly if at all. Tower flats seen from a tower opposite are set
+# to about -54 LUFS, upper floors and rooms seen across gardens to about -50; ground-floor windows keep their loops'
+# own level (-37 to -50). The gain is 10^((target - loop LUFS)/20), so a loud loop is turned down further.
+  - {id: cafe, file: media/loops/03-cafe.mp4, focus: [0.60, 0.52, 0.85]}
+  - {id: chip-shop, file: media/loops/36-chip-shop.mp4, focus: [0.45, 0.45, 0.85]}
+  - {id: cat, file: media/loops/02-cat-15th-floor.mp4, focus: [0.66, 0.62, 0.85], gain: 0.18}   # tower flat: -39.0 LUFS -> -54
+  - {id: basement, file: media/loops/15-basement-kitchen.mp4, focus: [0.48, 0.50, 0.85]}
+  - {id: florist, file: media/loops/34-florist-closing.mp4, focus: [0.57, 0.50, 0.85]}
+  - {id: dog, file: media/loops/04-dog-fetch.mp4, focus: [0.50, 0.64, 0.85]}
+  - {id: dinner, file: media/loops/05-dinner-through-house.mp4, focus: [0.47, 0.42, 0.85]}
+  - {id: pizza, file: media/loops/13-pizza-night.mp4, focus: [0.53, 0.55, 0.85], gain: 0.14}   # upper floor: -33.1 LUFS -> -50
+  - {id: corner-shop, file: media/loops/10-corner-shop.mp4, focus: [0.48, 0.48, 0.85]}
+  - {id: highrise, file: media/loops/06-highrise-dad-cooking.mp4, focus: [0.42, 0.60, 0.85], gain: 0.2}   # tower flat: -40.1 LUFS -> -54
+  - {id: ironing, file: media/loops/22-man-ironing.mp4, focus: [0.55, 0.50, 0.85], gain: 0.48}   # upper floor: -43.6 LUFS -> -50
+  - {id: tailor, file: media/loops/44-tailor-at-the-machine.mp4, focus: [0.66, 0.55, 0.85]}
+  - {id: village-pub, file: media/loops/45-village-pub-by-the-fire.mp4, focus: [0.38, 0.58, 0.85]}
+  - {id: launderette, file: media/loops/07-launderette.mp4, focus: [0.45, 0.52, 0.85]}
+  - {id: potter, file: media/loops/11-potter-at-the-wheel.mp4, focus: [0.58, 0.55, 0.85]}
+  - {id: knitting, file: media/loops/14-knitting-with-a-cat.mp4, focus: [0.60, 0.58, 0.85], gain: 0.5}   # upper floor: -44.0 LUFS -> -50
+  - {id: stretch, file: media/loops/27-evening-stretch.mp4, focus: [0.38, 0.55, 0.85], gain: 0.34}   # tower flat: -44.7 LUFS -> -54
+  - {id: barber, file: media/loops/12-barber-sweeping-up.mp4, focus: [0.46, 0.58, 0.85]}
+  - {id: board-game, file: media/loops/20-board-game-in-the-conservatory.mp4, focus: [0.40, 0.50, 0.85], gain: 0.23}   # upper floor: -37.4 LUFS -> -50
+  - {id: service, file: media/loops/49-evening-service.mp4, focus: [0.50, 0.50, 0.85]}
+  - {id: gamer, file: media/loops/19-teenager-gaming.mp4, focus: [0.50, 0.50, 0.85], gain: 0.3}   # upper floor: -39.6 LUFS -> -50
+  - {id: reader, file: media/loops/17-old-man-with-newspaper.mp4, focus: [0.40, 0.55, 0.85]}
+  - {id: boutique, file: media/loops/46-boutique-at-night.mp4, focus: [0.52, 0.58, 0.85]}
+  - {id: fish-tank, file: media/loops/09-fish-tank-in-the-dark.mp4, focus: [0.40, 0.52, 0.85], gain: 0.15}   # tower flat: -37.5 LUFS -> -54
+  - {id: pool, file: media/loops/16-pool-after-hours.mp4, focus: [0.50, 0.50, 0.85]}
+  - {id: terrace, file: media/loops/01-terrace-couple.mp4, focus: [0.62, 0.55, 0.85], gain: 0.35}
+  - {id: xmas-tree, file: media/loops/08-christmas-tree-empty-room.mp4, focus: [0.52, 0.45, 0.85]}
+  - {id: dinner-party, file: media/loops/23-after-the-dinner-party.mp4, focus: [0.68, 0.62, 0.85], gain: 0.34}   # upper floor: -40.6 LUFS -> -50
+  - {id: bedtime, file: media/loops/32-bedtime-story.mp4, focus: [0.58, 0.58, 0.85], gain: 0.32}   # upper floor: -40.2 LUFS -> -50
+  - {id: nursery, file: media/loops/28-nursery-night-light.mp4, focus: [0.55, 0.55, 0.85], gain: 0.33}   # tower flat: -44.5 LUFS -> -54
+
+pages:
+  # 1 Dusk: shops closing, people coming home
+  - {big_tl: chip-shop, r0c2: cafe, r0c3: cat, r1c3: florist, r1c2: basement, big_br: dinner, r3c1: dog, r2c1: launderette, r2c0: corner-shop, r3c0: highrise}
+  # 2 The evening
+  - {big_tl: village-pub, r0c2: ironing, r0c3: tailor, r1c3: potter, r1c2: pizza, big_br: board-game, r3c1: knitting, r2c1: stretch, r2c0: barber, r3c0: service}
+  # 3 Night, ending on the nursery
+  - {big_tl: pool, r0c2: gamer, r0c3: reader, r1c3: fish-tank, r1c2: boutique, big_br: dinner-party, r3c1: terrace, r2c1: xmas-tree, r2c0: bedtime, r3c0: nursery}

@@ -1,0 +1,6 @@
+# Optional: pipeline/sound_check.py (AudioSet tagging with PANNs). About 1 GB with torch.
+# The model files go in ~/panns_data once; see docs/ARCHITECTURE.md, "Dependencies".
+-r requirements.txt
+torch>=2.2
+librosa>=0.10
+panns-inference>=0.1.1
